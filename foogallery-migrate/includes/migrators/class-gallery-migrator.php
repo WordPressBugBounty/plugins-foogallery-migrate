@@ -30,7 +30,7 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
             wp_nonce_field( 'foogallery_migrate', 'foogallery_migrate', false );
 
             if ( count( $galleries ) === 0 ) {
-                echo '<p>' . __( 'No galleries found!', 'foogallery-migrate' ) . '</p>';
+                echo '<p>' . esc_html__( 'No galleries found!', 'foogallery-migrate' ) . '</p>';
                 $show_refresh = true;
                 $migrating = false;
             } else {
@@ -55,24 +55,24 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                         <tr>
                             <td id="cb" class="manage-column column-cb check-column">
                                 <?php if ( ! $migrating ) { ?>
-                                    <label class="screen-reader-text" for="cb-select-all-1"><?php _e( 'Select All', 'foogallery-migrate' ); ?></label>
+                                    <label class="screen-reader-text" for="cb-select-all-1"><?php esc_html_e( 'Select All', 'foogallery-migrate' ); ?></label>
                                     <input id="cb-select-all-1" type="checkbox" <?php echo $migrating ? 'disabled="disabled"' : ''; ?> checked="checked" />
                                 <?php } ?>
                             </td>
                             <th scope="col" class="manage-column">
-                                <span><?php _e( 'Gallery', 'foogallery-migrate' ); ?></span>
+                                <span><?php esc_html_e( 'Gallery', 'foogallery-migrate' ); ?></span>
                             </th>
                             <th scope="col" class="manage-column">
-                                <span><?php _e( 'Source', 'foogallery-migrate' ); ?></span>
+                                <span><?php esc_html_e( 'Source', 'foogallery-migrate' ); ?></span>
                             </th>
                             <th scope="col" class="manage-column">
-                                <span><?php _e( 'Migration Data', 'foogallery-migrate' ); ?></span>
+                                <span><?php esc_html_e( 'Migration Data', 'foogallery-migrate' ); ?></span>
                             </th>
                             <th scope="col" class="manage-column">
-                                <span><?php printf( __( '%s Name', 'foogallery-migrate' ), foogallery_plugin_name() ); ?></span>
+                                <span><?php printf( esc_html__( '%s Name', 'foogallery-migrate' ), esc_html( foogallery_plugin_name() ) ); ?></span>
                             </th>
                             <th scope="col" class="manage-column">
-                                <span><?php _e( 'Migration Progress', 'foogallery' ); ?></span>
+                                <span><?php esc_html_e( 'Migration Progress', 'foogallery' ); ?></span>
                             </th>
                         </tr>
                     </thead>
@@ -83,24 +83,25 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                     $page = 1;
                     if ( defined( 'DOING_AJAX' ) ) {
                         if ( array_key_exists( 'foogallery_migrate_paged', $_POST ) ) {
-                            $url = sanitize_url( $_POST['foogallery_migrate_url'] );
-                            $page = sanitize_text_field( $_POST['foogallery_migrate_paged'] );
+                            $url = esc_url_raw( wp_unslash( $_POST['foogallery_migrate_url'] ) );
+                            $page = absint( wp_unslash( $_POST['foogallery_migrate_paged'] ) );
                         } else {
                             $url = wp_get_referer();
                             $parts = parse_url($url);
                             parse_str( $parts['query'], $query );
-                            $page = $query['paged'];
+                            $page = isset( $query['gallery_paged'] ) ? absint( $query['gallery_paged'] ) : 1;
                         }
-                    } else if ( array_key_exists( 'paged', $_GET ) ) {
-                        $page = sanitize_text_field( $_GET['paged'] );
+                    } else if ( array_key_exists( 'gallery_paged', $_GET ) ) {
+                        $page = absint( wp_unslash( $_GET['gallery_paged'] ) );
                     }
-                    $url = add_query_arg( 'paged', $page, $url ) . '#galleries';
+                    $url = add_query_arg( 'gallery_paged', $page, $url ) . '#galleries';
                     $gallery_count = count( $galleries );
                     $page_size = apply_filters( 'foogallery_migrate_page_size', 20);
 
                     $pagination = new Pagination();
                     $pagination->items( $gallery_count );
                     $pagination->limit( $page_size ); // Limit entries per page
+                    $pagination->parameterName( 'gallery_paged' );
                     $pagination->url = $url;
                     $pagination->currentPage( $page );
                     $pagination->calculate();
@@ -112,7 +113,7 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                         $gallery = $galleries[$counter];
                         $progress    = $gallery->progress;
                         $done        = $gallery->migrated;
-                        $edit_link	 = '';
+                        $edit_link   = '';
                         $foogallery = false;
                         if ( $gallery->migrated_id > 0 ) {
                             $foogallery = \FooGallery::get_by_id( $gallery->migrated_id );
@@ -121,7 +122,9 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                             } else {
                                 $done = false;
                             }
-                        } ?>
+                        } 
+						
+						?>
                         <tr class="<?php echo esc_attr( ($counter % 2 === 0) ? 'alternate' : '' ); ?>">
                             <?php if ( !$has_migrations && !$migrating && !$done ) { ?>
                                 <th scope="row" class="column-cb check-column">
@@ -147,26 +150,92 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                                 <?php echo esc_html( $gallery->plugin->name() ); ?>
                             </td>
                             <td>
-                                <?php _e( 'Template : ', 'foogallery-migrate' ); ?>
+                                <?php esc_html_e( 'Template : ', 'foogallery-migrate' ); ?>
                                 <?php echo esc_html( $gallery->plugin->get_gallery_template( $gallery ) ); ?>
                                 <br />
-                                <?php _e( 'Images : ', 'foogallery-migrate' ); ?>
+                                <?php esc_html_e( 'Images : ', 'foogallery-migrate' ); ?>
                                 <?php echo esc_html( $gallery->get_children_count() ); ?>
                                 <?php if ( foogallery_is_debug() ) { ?>
                                 <br />
-                                <?php _e( 'Settings : ', 'foogallery-migrate' ); ?>
+                                <?php esc_html_e( 'Settings : ', 'foogallery-migrate' ); ?>
                                 <?php echo wp_kses_post ( foogallery_migrate_array_to_table( $gallery->plugin->get_gallery_settings( $gallery, array() ) ) ); ?>
                                 <?php  } ?>
                             </td>
                             <td>
                                 <?php if ( $foogallery ) {
-                                    echo $edit_link;
+                                    echo wp_kses_post( $edit_link );
                                 } else { ?>
                                     <input name="foogallery-title-<?php echo esc_attr( $gallery->unique_identifier() ); ?>" value="<?php echo esc_attr( $gallery->title ); ?>">
                                 <?php } ?>
                             </td>
                             <td class="foogallery-migrate-progress foogallery-migrate-progress-<?php echo esc_attr( $gallery->migration_status ); ?>">
                                 <?php echo esc_html( $gallery->friendly_migration_message() ); ?>
+                                <?php if ( ! $done ) { ?>
+									<br />
+                                    <button type="button" class="button retry_migrate_gallery" data-gallery-id="<?php echo esc_attr( $gallery->unique_identifier() ); ?>">
+                                        <?php esc_html_e( 'Migrate', 'foogallery-migrate' ); ?>
+                                    </button>
+                                <?php } elseif ( $gallery->migration_status === \FooPlugins\FooGalleryMigrate\Objects\Migratable::PROGRESS_COMPLETED ) { ?>
+                                    <br />
+                                    <button type="button" class="button check_migrate_gallery" data-gallery-id="<?php echo esc_attr( $gallery->unique_identifier() ); ?>">
+                                        <?php esc_html_e( 'Check', 'foogallery-migrate' ); ?>
+                                    </button>
+                                <?php } ?>
+								<?php if ( $gallery->has_children() ) {
+									$error_rows = array();
+									foreach ( $gallery->get_children() as $child ) {
+										if ( ! is_object( $child ) ) {
+											continue;
+										}
+										$has_error = false;
+										if ( method_exists( $child, 'has_error' ) ) {
+											$has_error = $child->has_error();
+										}
+										if ( $has_error ) {
+											$source_url = isset( $child->source_url ) ? $child->source_url : '';
+											$error_rows[] = array(
+												'source_url' => $source_url,
+												'message'    => $child->get_error_message(),
+											);
+										}
+									}
+
+									$error_count = count( $error_rows );
+									$error_label = sprintf( _n( '%d error', '%d errors', $error_count, 'foogallery-migrate' ), $error_count );
+									?>
+									<?php if ( $error_count > 0 ) { ?>
+										<br />
+										<?php echo esc_html( sprintf( __( 'Errors: %s', 'foogallery-migrate' ), $error_label ) ); ?>
+										<details class="foogallery-migrate-error-details">
+											<summary><?php esc_html_e( 'View error details', 'foogallery-migrate' ); ?></summary>
+											<table class="widefat striped">
+												<thead>
+													<tr>
+														<th><?php esc_html_e( 'Source URL', 'foogallery-migrate' ); ?></th>
+														<th><?php esc_html_e( 'Error', 'foogallery-migrate' ); ?></th>
+													</tr>
+												</thead>
+												<tbody>
+												<?php foreach ( $error_rows as $error_row ) { ?>
+													<tr>
+														<td>
+															<?php if ( ! empty( $error_row['source_url'] ) ) { ?>
+																<a href="<?php echo esc_url( $error_row['source_url'] ); ?>" target="_blank" rel="noreferrer noopener"><?php echo esc_html( $error_row['source_url'] ); ?></a>
+															<?php } else { ?>
+																<?php esc_html_e( 'Unknown', 'foogallery-migrate' ); ?>
+															<?php } ?>
+														</td>
+														<td><?php echo esc_html( $error_row['message'] ); ?></td>
+													</tr>
+												<?php } ?>
+												</tbody>
+											</table>
+										</details>
+                                        <button type="button" class="button retry_migrate_gallery" data-gallery-id="<?php echo esc_attr( $gallery->unique_identifier() ); ?>">
+                                            <?php esc_html_e( 'Retry Migration', 'foogallery-migrate' ); ?>
+                                        </button>
+									<?php } ?>
+								<?php } ?>
                             </td>
                         </tr>
                         <?php
@@ -176,7 +245,7 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                 </table>
                 <div class="tablenav bottom">
                     <div class="tablenav-pages">
-                        <?php echo $pagination->render(); ?>
+                        <?php echo wp_kses_post( $pagination->render() ); ?>
                     </div>
                 </div>
 
@@ -185,21 +254,23 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                 echo '<input type="hidden" name="foogallery_migrate_paged" value="' . esc_attr( $page ) . '" />';
                 echo '<input type="hidden" name="foogallery_migrate_url" value="' . esc_url( $url ) . '" />';
                 echo '<input type="hidden" class="migrate_progress" value="' . esc_attr( $overall_progress ) . '" />';
+                echo '<input type="hidden" name="foogallery_migrate_retry_gallery_id" value="" />';
+                echo '<input type="hidden" name="foogallery_migrate_check_gallery_id" value="" />';
 
                 if ( $has_migrations ) { ?>
                     <button name="foogallery_migrate_action" value="foogallery_migrate_continue"
-                            class="button button-primary continue_migrate"><?php _e( 'Resume Migration', 'foogallery-migrate' ); ?></button>
+                            class="button button-primary continue_migrate"><?php esc_html_e( 'Resume Migration', 'foogallery-migrate' ); ?></button>
                     <button name="foogallery_migrate_action" value="foogallery_migrate_cancel"
-                            class="button cancel_migrate"><?php _e( 'Stop Migration', 'foogallery-migrate' ); ?></button>
+                            class="button cancel_migrate"><?php esc_html_e( 'Stop Migration', 'foogallery-migrate' ); ?></button>
                 <?php } else { ?>
                     <button name="foogallery_migrate_action" value="foogallery_migrate_start"
-                            class="button button-primary start_migrate"><?php _e( 'Start Gallery Migration', 'foogallery-migrate' ); ?></button>
+                            class="button button-primary start_migrate"><?php esc_html_e( 'Start Gallery Migration', 'foogallery-migrate' ); ?></button>
                 <?php
                 }
             }
             if ( $show_refresh ) { ?>
                 <button name="foogallery_migrate_action" value="foogallery_refresh_gallery"
-                        class="button refresh_gallery"><?php _e( 'Refresh Galleries', 'foogallery-migrate' ); ?></button>
+                        class="button refresh_gallery"><?php esc_html_e( 'Refresh Galleries', 'foogallery-migrate' ); ?></button>
             <?php }
             ?><div id="foogallery_migrate_gallery_spinner" style="width:20px">
                 <span class="spinner"></span>

@@ -30,7 +30,7 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\AlbumMigrator' ) ) 
             wp_nonce_field( 'foogallery_album_migrate', 'foogallery_album_migrate', false );
 
             if ( count( $albums ) === 0 ) {
-                echo '<p>' . __( 'No albums found!', 'foogallery-migrate' ) . '</p>';
+                echo '<p>' . esc_html__( 'No albums found!', 'foogallery-migrate' ) . '</p>';
                 $show_refresh = true;
                 $migrating = false;
             } else {
@@ -57,24 +57,24 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\AlbumMigrator' ) ) 
                         <tr>
                             <td id="cb" class="manage-column column-cb check-column">
                                 <?php if ( ! $migrating ) { ?>
-                                    <label class="screen-reader-text" for="cb-select-all-1"><?php _e( 'Select All', 'foogallery-migrate' ); ?></label>
+                                    <label class="screen-reader-text" for="cb-select-all-1"><?php esc_html_e( 'Select All', 'foogallery-migrate' ); ?></label>
                                     <input id="cb-select-all-1" type="checkbox" <?php echo $migrating ? 'disabled="disabled"' : ''; ?> checked="checked" />
                                 <?php } ?>
                             </td>
                             <th scope="col" class="manage-column">
-                                <span><?php _e( 'Album', 'foogallery-migrate' ); ?></span>
+                                <span><?php esc_html_e( 'Album', 'foogallery-migrate' ); ?></span>
                             </th>
                             <th scope="col" class="manage-column">
-                                <span><?php _e( 'Source', 'foogallery-migrate' ); ?></span>
+                                <span><?php esc_html_e( 'Source', 'foogallery-migrate' ); ?></span>
                             </th>
                             <th scope="col" class="manage-column">
-                                <span><?php _e( 'Migration Data', 'foogallery-migrate' ); ?></span>
+                                <span><?php esc_html_e( 'Migration Data', 'foogallery-migrate' ); ?></span>
                             </th>
                             <th scope="col" class="manage-column">
-                                <span><?php printf( __( '%s Album Name', 'foogallery-migrate' ), foogallery_plugin_name() ); ?></span>
+                                <span><?php printf( esc_html__( '%s Album Name', 'foogallery-migrate' ), esc_html( foogallery_plugin_name() ) ); ?></span>
                             </th>
                             <th scope="col" class="manage-column">
-                                <span><?php _e( 'Migration Progress', 'foogallery' ); ?></span>
+                                <span><?php esc_html_e( 'Migration Progress', 'foogallery' ); ?></span>
                             </th>
                         </tr>
                     </thead>
@@ -85,24 +85,25 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\AlbumMigrator' ) ) 
                     $page = 1;
                     if ( defined( 'DOING_AJAX' ) ) {
                         if ( array_key_exists( 'foogallery_album_migrate_paged', $_POST ) ) {
-                            $url = sanitize_url( $_POST['foogallery_album_migrate_url'] );
-                            $page = sanitize_text_field( $_POST['foogallery_album_migrate_paged'] );
+                            $url = esc_url_raw( wp_unslash( $_POST['foogallery_album_migrate_url'] ) );
+                            $page = absint( wp_unslash( $_POST['foogallery_album_migrate_paged'] ) );
                         } else {
                             $url = wp_get_referer();
                             $parts = parse_url($url);
                             parse_str( $parts['query'], $query );
-                            $page = $query['paged'];
+                            $page = isset( $query['album_paged'] ) ? absint( $query['album_paged'] ) : 1;
                         }
-                    } else if ( array_key_exists( 'paged', $_GET ) ) {
-                        $page = sanitize_text_field( $_GET['paged'] );
+                    } else if ( array_key_exists( 'album_paged', $_GET ) ) {
+                        $page = absint( wp_unslash( $_GET['album_paged'] ) );
                     }
-                    $url = add_query_arg( 'paged', $page, $url ) . '#albums';
+                    $url = add_query_arg( 'album_paged', $page, $url ) . '#albums';
                     $albums_count = count( $albums );
                     $page_size = apply_filters( 'foogallery_migrate_page_size', 20);
 
                     $pagination = new Pagination();
                     $pagination->items( $albums_count );
                     $pagination->limit( $page_size ); // Limit entries per page
+                    $pagination->parameterName( 'album_paged' );
                     $pagination->url = $url;
                     $pagination->currentPage( $page );
                     $pagination->calculate();
@@ -145,10 +146,10 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\AlbumMigrator' ) ) 
                                 <?php echo esc_html( $album->plugin->name() ); ?>
                             </td>
                             <td>
-                                <?php _e( 'Galleries : ', 'foogallery-migrate' ); ?>
+                                <?php esc_html_e( 'Galleries : ', 'foogallery-migrate' ); ?>
                                 <?php echo esc_html( $album->get_children_count() ); ?>
                                 <br />
-                                <?php _e( 'Images : ', 'foogallery-migrate' ); ?>
+                                <?php esc_html_e( 'Images : ', 'foogallery-migrate' ); ?>
                                 <?php echo esc_html( $album->get_total_images() ); ?>
                             </td>
                             <td>
@@ -173,7 +174,7 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\AlbumMigrator' ) ) 
                 </table>
                 <div class="tablenav bottom">
                     <div class="tablenav-pages">
-                        <?php echo $pagination->render(); ?>
+                        <?php echo wp_kses_post( $pagination->render() ); ?>
                     </div>
                 </div>
 
@@ -186,18 +187,18 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\AlbumMigrator' ) ) 
 
                 if ( $has_migrations ) { ?>
                     <button name="foogallery_migrate_action" value="foogallery_album_migrate_continue"
-                            class="button button-primary continue_album_migrate"><?php _e( 'Resume Migration', 'foogallery-migrate' ); ?></button>
+                            class="button button-primary continue_album_migrate"><?php esc_html_e( 'Resume Migration', 'foogallery-migrate' ); ?></button>
                     <button name="foogallery_migrate_action" value="foogallery_album_migrate_cancel"
-                            class="button cancel_album_migrate"><?php _e( 'Stop Migration', 'foogallery-migrate' ); ?></button>
+                            class="button cancel_album_migrate"><?php esc_html_e( 'Stop Migration', 'foogallery-migrate' ); ?></button>
                 <?php } else { ?>
                     <button name="foogallery_migrate_action" value="foogallery_album_migrate_start"
-                            class="button button-primary start_album_migrate"><?php _e( 'Start Album Migration', 'foogallery-migrate' ); ?></button>
+                            class="button button-primary start_album_migrate"><?php esc_html_e( 'Start Album Migration', 'foogallery-migrate' ); ?></button>
                 <?php
                 }
             }
             if ( $show_refresh ) { ?>
                 <button name="foogallery_migrate_action" value="foogallery_refresh_albums"
-                        class="button refresh_albums"><?php _e( 'Refresh Albums', 'foogallery-migrate' ); ?></button>
+                        class="button refresh_albums"><?php esc_html_e( 'Refresh Albums', 'foogallery-migrate' ); ?></button>
             <?php }
             ?><div id="foogallery_migrate_album_spinner" style="width:20px">
                 <span class="spinner"></span>

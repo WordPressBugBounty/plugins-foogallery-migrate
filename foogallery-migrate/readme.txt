@@ -2,9 +2,9 @@
 Contributors: fooplugins,bradvin,elviiso
 Tags: gallery, image gallery, photo gallery, wordpress gallery plugin, migrate
 Requires at least: 6.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 5.4
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,17 @@ Migrate to FooGallery from other gallery plugins, including:
 *	NextGen Gallery
 *	Photo Gallery by 10Web
 *	Robo Gallery
+
+Features:
+
+* Migrate images and galleries
+* Migrate albums
+* Migrate blocks / shortcodes in post & page content
+
+= Test It First =
+
+Spin up a demo site with FooGallery Migrate and all supported galleries, so you can see how it work:
+[Try Migrate Demo](https://app.instawp.io/launch?s=foogallery-migrate&d=v2)
 
 = Migrate Away From Envira =
 
@@ -63,10 +74,20 @@ Update now to get all the latest features, bug fixes and improvements!
 
 == Changelog ==
 
+= 1.5 =
+* Added new feature : block / shortcode migration!
+* Added new Log tab to see all migrated information.
+* Added new debug tab to see migrated info (shown when FooGallery Debug mode is on)
+* Added "Migrate" button for each gallery so you can migrate 1 gallery at a time.
+* Added a "Check for migration errors" button which checks all attachments after a migration.
+* Added a "Check" button for each migrated gallery to check for errors.
+* Added error info for attachments on gallery tab under migration progress.
+* Made the attachment import more resilient to large files.
+
 = 1.4 =
-* Complete NextGen metadata migration improvements
-- Fix NextGen alt text mapping to properly populate FooGallery title and alt fields
-- Configure FooGallery galleries to display image titles as caption titles
+* Updated NextGen metadata migration improvements
+* Fix NextGen alt text mapping to properly populate FooGallery title and alt fields
+* Configure FooGallery galleries to display image titles as caption titles
 
 = 1.3 =
 * Fixed bug where NextGen image captions were not being migrated
