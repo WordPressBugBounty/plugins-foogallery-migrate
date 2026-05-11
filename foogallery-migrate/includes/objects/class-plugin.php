@@ -49,6 +49,22 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Objects\Plugin' ) ) {
         abstract function get_gallery_template( $gallery );
 
         /**
+         * Returns the gallery template that should be used during migration.
+         *
+         * @param $gallery Gallery
+         * @return string
+         */
+        function get_migration_gallery_template( $gallery ) {
+            $override_gallery_template = foogallery_migrate_migrator_instance()->get_override_gallery_template();
+
+            if ( ! empty( $override_gallery_template ) ) {
+                return $override_gallery_template;
+            }
+
+            return $this->get_gallery_template( $gallery );
+        }
+
+        /**
          * Returns the closest possible gallery settings
          *
          * @param $gallery Gallery
@@ -164,6 +180,17 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Objects\Plugin' ) ) {
          */
         function get_block_patterns() {
             return array();
+        }
+
+        /**
+         * Returns the migrated object type for a detected shortcode/block.
+         *
+         * @param string $original_content Original shortcode or serialized block content.
+         * @param string $block_name Block name, if the detected content is a block.
+         * @return string
+         */
+        function get_content_object_type( $original_content, $block_name = '' ) {
+            return 'gallery';
         }
     }
 }

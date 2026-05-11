@@ -100,11 +100,13 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Plugins\Modula' ) ) {
             if ( is_array( $modula_images ) && !empty( $modula_images ) ) {
                 foreach ( $modula_images as $modula_image ) {
                     $modula_image = ( object ) $modula_image;
+                    $caption = isset( $modula_image->description ) ? $modula_image->description : '';
+                    $alt = isset( $modula_image->alt ) ? $modula_image->alt : '';
 
                     $data = array(
                         'source_url' => wp_get_attachment_url( $modula_image->id ),
-                        'caption' => $modula_image->description,
-                        'alt' => $modula_image->alt,
+                        'caption' => $caption,
+                        'alt' => $alt,
                         'date' => get_the_date( 'Y-m-d', $modula_image->id ) . ' ' . get_the_time( 'H:i:s', $modula_image->id ),
                         'data' => $modula_image
                     );
@@ -164,7 +166,7 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Plugins\Modula' ) ) {
                 $height = get_option( 'thumbnail_size_h' );
             }
 
-            $gallery_template = $this->get_gallery_template( $gallery );
+            $gallery_template = $this->get_migration_gallery_template( $gallery );
 
             if ( $width > 0 && $height > 0 ) {
                 $settings[ $gallery_template . '_thumbnail_dimensions'] = array(
