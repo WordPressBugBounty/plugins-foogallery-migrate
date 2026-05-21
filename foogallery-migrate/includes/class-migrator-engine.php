@@ -19,14 +19,29 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
 	 */
 	class MigratorEngine {
 
-        protected const KEY_PLUGINS = 'plugins';
-        protected const KEY_GALLERIES = 'galleries';
-        protected const KEY_ALBUMS = 'albums';
-        protected const KEY_CONTENT = 'block-shortcode';
-        protected const KEY_MIGRATED = 'migrated';
-        protected const SETTING_OVERRIDE_GALLERY_LAYOUT = 'override_gallery_layout';
-        protected const SETTING_PAGE_SIZE = 'page_size';
-        protected const SETTING_DEBUG_ENABLED = 'debug_enabled';
+        const KEY_PLUGINS = 'plugins';
+        const KEY_GALLERIES = 'galleries';
+        const KEY_ALBUMS = 'albums';
+        const KEY_CONTENT = 'block-shortcode';
+        const KEY_MIGRATED = 'migrated';
+
+        /**
+         * @var MigratorSettings
+         */
+        protected $settings;
+
+        /**
+         * Returns the migrator settings handler.
+         *
+         * @return MigratorSettings
+         */
+        protected function settings() {
+            if ( ! isset( $this->settings ) ) {
+                $this->settings = new MigratorSettings();
+            }
+
+            return $this->settings;
+        }
 
         /**
          * Returns a setting for the migrator.
@@ -34,13 +49,7 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return mixed
          */
         public function get_migrator_setting( $name, $default = false ) {
-            $settings = get_option( FOOGALLERY_MIGRATE_OPTION_DATA );
-
-            if ( isset( $settings ) && is_array( $settings ) && array_key_exists( $name, $settings ) ) {
-                return $settings[ $name ];
-            }
-
-            return $default;
+            return $this->settings()->get_migrator_setting( $name, $default );
         }
 
         /**
@@ -51,15 +60,7 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return void
          */
         public function set_migrator_setting( $name, $value ) {
-            $settings = get_option( FOOGALLERY_MIGRATE_OPTION_DATA );
-
-            if ( !isset( $settings ) || ! is_array( $settings ) ) {
-                $settings = array();
-            }
-
-            $settings[ $name ] = $value;
-
-            update_option( FOOGALLERY_MIGRATE_OPTION_DATA, $settings, false );
+            $this->settings()->set_migrator_setting( $name, $value );
         }
 
         /**
@@ -68,24 +69,7 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return array
          */
         public function get_settings() {
-            $defaults = array(
-                self::SETTING_OVERRIDE_GALLERY_LAYOUT => '',
-                self::SETTING_PAGE_SIZE => 20,
-                self::SETTING_DEBUG_ENABLED => function_exists( 'foogallery_is_debug' ) && foogallery_is_debug(),
-            );
-
-            $settings = get_option( FOOGALLERY_MIGRATE_OPTION_SETTINGS, array() );
-
-            if ( ! is_array( $settings ) ) {
-                $settings = array();
-            }
-
-            $settings = array_merge( $defaults, $settings );
-            $settings[ self::SETTING_OVERRIDE_GALLERY_LAYOUT ] = $this->sanitize_override_gallery_layout( $settings[ self::SETTING_OVERRIDE_GALLERY_LAYOUT ] );
-            $settings[ self::SETTING_PAGE_SIZE ] = is_scalar( $settings[ self::SETTING_PAGE_SIZE ] ) ? absint( $settings[ self::SETTING_PAGE_SIZE ] ) : $defaults[ self::SETTING_PAGE_SIZE ];
-            $settings[ self::SETTING_DEBUG_ENABLED ] = ! empty( $settings[ self::SETTING_DEBUG_ENABLED ] );
-
-            return $settings;
+            return $this->settings()->get_settings();
         }
 
         /**
@@ -95,18 +79,7 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return void
          */
         public function save_settings( $settings ) {
-            $current_settings = $this->get_settings();
-
-            if ( ! is_array( $settings ) ) {
-                $settings = array();
-            }
-
-            $settings = array_merge( $current_settings, $settings );
-            $settings[ self::SETTING_OVERRIDE_GALLERY_LAYOUT ] = $this->sanitize_override_gallery_layout( $settings[ self::SETTING_OVERRIDE_GALLERY_LAYOUT ] );
-            $settings[ self::SETTING_PAGE_SIZE ] = is_scalar( $settings[ self::SETTING_PAGE_SIZE ] ) ? absint( $settings[ self::SETTING_PAGE_SIZE ] ) : $current_settings[ self::SETTING_PAGE_SIZE ];
-            $settings[ self::SETTING_DEBUG_ENABLED ] = ! empty( $settings[ self::SETTING_DEBUG_ENABLED ] );
-
-            update_option( FOOGALLERY_MIGRATE_OPTION_SETTINGS, $settings, false );
+            $this->settings()->save_settings( $settings );
         }
 
         /**
@@ -115,22 +88,7 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return array
          */
         public function get_available_gallery_templates() {
-            $templates = array();
-
-            if ( ! function_exists( 'foogallery_gallery_templates' ) ) {
-                return $templates;
-            }
-
-            foreach ( foogallery_gallery_templates() as $template ) {
-                if ( ! is_array( $template ) || empty( $template['slug'] ) ) {
-                    continue;
-                }
-
-                $slug = (string) $template['slug'];
-                $templates[ $slug ] = isset( $template['name'] ) ? (string) $template['name'] : $slug;
-            }
-
-            return $templates;
+            return $this->settings()->get_available_gallery_templates();
         }
 
         /**
@@ -139,9 +97,7 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return string
          */
         public function get_override_gallery_template() {
-            $settings = $this->get_settings();
-
-            return $settings[ self::SETTING_OVERRIDE_GALLERY_LAYOUT ];
+            return $this->settings()->get_override_gallery_template();
         }
 
         /**
@@ -150,9 +106,16 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return int
          */
         public function get_page_size() {
-            $settings = $this->get_settings();
+            return $this->settings()->get_page_size();
+        }
 
-            return absint( apply_filters( 'foogallery_migrate_page_size', $settings[ self::SETTING_PAGE_SIZE ] ) );
+        /**
+         * Gets the number of images to import per migration AJAX turn.
+         *
+         * @return int
+         */
+        public function get_images_per_turn() {
+            return $this->settings()->get_images_per_turn();
         }
 
         /**
@@ -161,43 +124,16 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return bool
          */
         public function is_debug_enabled() {
-            $settings = $this->get_settings();
-
-            return ! empty( $settings[ self::SETTING_DEBUG_ENABLED ] );
+            return $this->settings()->is_debug_enabled();
         }
 
         /**
-         * Sanitizes the selected gallery layout override.
+         * Clear migrator settings.
          *
-         * @param string $value Gallery template slug.
-         * @return string
-         */
-        protected function sanitize_override_gallery_layout( $value ) {
-            if ( ! is_scalar( $value ) ) {
-                return '';
-            }
-
-            $value = sanitize_key( (string) $value );
-
-            if ( '' === $value ) {
-                return '';
-            }
-
-            $templates = $this->get_available_gallery_templates();
-
-            return array_key_exists( $value, $templates ) ? $value : '';
-        }
-
-        /**
-         * Clear a migrator setting.
-         *
-         * @param $name
-         * @param $value
          * @return void
          */
         public function clear_migrator_setting() {
-            $settings = array();
-            update_option( FOOGALLERY_MIGRATE_OPTION_DATA, $settings, false );
+            $this->settings()->clear_migrator_setting();
         }
 
         /**
@@ -206,9 +142,7 @@ if ( !class_exists( 'FooPlugins\FooGalleryMigrate\MigratorEngine' ) ) {
          * @return bool
          */
         public function has_migrator_settings() {
-            $settings = get_option( FOOGALLERY_MIGRATE_OPTION_DATA );
-
-            return isset( $settings ) && is_array( $settings );
+            return $this->settings()->has_migrator_settings();
         }
 
         /**

@@ -127,6 +127,7 @@ class ComposerStaticInit43ec7e767a7bdd4cb09ba064c76840ae
         'Composer\\Installers\\ZikulaInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ZikulaInstaller.php',
         'FooPlugins\\FooGalleryMigrate\\Init' => __DIR__ . '/../..' . '/includes/class-init.php',
         'FooPlugins\\FooGalleryMigrate\\MigratorEngine' => __DIR__ . '/../..' . '/includes/class-migrator-engine.php',
+        'FooPlugins\\FooGalleryMigrate\\MigratorSettings' => __DIR__ . '/../..' . '/includes/class-migrator-settings.php',
         'FooPlugins\\FooGalleryMigrate\\Migrators\\AlbumMigrator' => __DIR__ . '/../..' . '/includes/migrators/class-album-migrator.php',
         'FooPlugins\\FooGalleryMigrate\\Migrators\\ContentMigrator' => __DIR__ . '/../..' . '/includes/migrators/class-content-migrator.php',
         'FooPlugins\\FooGalleryMigrate\\Migrators\\GalleryMigrator' => __DIR__ . '/../..' . '/includes/migrators/class-gallery-migrator.php',

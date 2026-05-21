@@ -775,19 +775,19 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\ContentMigrator' ) 
 					$show_pagination = $page_size > 0;
 
 					if ( $show_pagination ) {
-					$pagination = new Pagination();
-					$pagination->items( $content_items_count );
-					$pagination->limit( $page_size );
-					$pagination->parameterName( 'content_paged' );
-					$pagination->url = $url;
-					$pagination->currentPage( $page );
-					$pagination->calculate();
-					$start = $pagination->start;
-					$end = $pagination->end;
-				} else {
-					$start = 0;
-					$end = $content_items_count - 1;
-				}
+						$pagination = new Pagination();
+						$pagination->items( $content_items_count );
+						$pagination->limit( $page_size );
+						$pagination->parameterName( 'content_paged' );
+						$pagination->url = $url;
+						$pagination->currentPage( $page );
+						$pagination->calculate();
+						$start = $pagination->start;
+						$end = $pagination->end;
+					} else {
+						$start = 0;
+						$end = $content_items_count - 1;
+					}
 				
 				$enabled_count = 0;
 				$checked_count = 0;

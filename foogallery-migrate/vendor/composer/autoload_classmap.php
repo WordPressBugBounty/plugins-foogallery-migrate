@@ -104,6 +104,7 @@ return array(
     'Composer\\Installers\\ZikulaInstaller' => $vendorDir . '/composer/installers/src/Composer/Installers/ZikulaInstaller.php',
     'FooPlugins\\FooGalleryMigrate\\Init' => $baseDir . '/includes/class-init.php',
     'FooPlugins\\FooGalleryMigrate\\MigratorEngine' => $baseDir . '/includes/class-migrator-engine.php',
+    'FooPlugins\\FooGalleryMigrate\\MigratorSettings' => $baseDir . '/includes/class-migrator-settings.php',
     'FooPlugins\\FooGalleryMigrate\\Migrators\\AlbumMigrator' => $baseDir . '/includes/migrators/class-album-migrator.php',
     'FooPlugins\\FooGalleryMigrate\\Migrators\\ContentMigrator' => $baseDir . '/includes/migrators/class-content-migrator.php',
     'FooPlugins\\FooGalleryMigrate\\Migrators\\GalleryMigrator' => $baseDir . '/includes/migrators/class-gallery-migrator.php',
