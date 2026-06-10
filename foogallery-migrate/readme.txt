@@ -1,6 +1,6 @@
-=== FooGallery Migrate ===
+=== FooGallery Migrate - Switch from Modula, Envira, NextGen & Other Galleries ===
 Contributors: fooplugins,bradvin,elviiso
-Tags: gallery, image gallery, photo gallery, wordpress gallery plugin, migrate
+Tags: foogallery, modula, nextgen, envira, foo
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 5.4
