@@ -1,6 +1,6 @@
-=== FooGallery Migrate - Switch from Modula, Envira, NextGen & Other Galleries ===
+=== FooGallery Migrate ===
 Contributors: fooplugins,bradvin,elviiso
-Tags: foogallery, modula, nextgen, envira, foo
+Tags: gallery, image gallery, photo gallery, wordpress gallery plugin, migrate
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 5.4
@@ -78,6 +78,13 @@ Update now to get all the latest features, bug fixes and improvements!
 [Contact us](https://fooplugins.com/support/) and we will build an importer to help you migrate to FooGallery.
 
 == Changelog ==
+
+= 1.10 =
+* Added support for replacing NextGEN singlepic shortcodes with standard WordPress captioned image content that links to the full-size attachment.
+* Improved NextGEN shortcode detection for legacy gallery formats and modern [ngg src="galleries" ids="..."] shortcodes.
+* Preserved NextGEN singlepic alignment and explicit width/height settings during content migration.
+* Defaulted migrated NextGEN singlepic output to the attachment thumbnail when no size is specified.
+* Imported NextGEN image descriptions into WordPress attachment captions for captioned single-image replacements.
 
 = 1.9 =
 * Added Override Gallery Settings and Override Album Settings options to inherit settings from existing FooGallery galleries and albums during migration.
