@@ -6,6 +6,10 @@
  */
 
 namespace FooPlugins\FooGalleryMigrate\Objects;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 use FooPlugins\FooGalleryMigrate\Objects\Gallery;
 use FooPlugins\FooGalleryMigrate\Objects\Image;
 use FooPlugins\FooGalleryMigrate\Objects\Album;
@@ -143,7 +147,14 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Objects\Plugin' ) ) {
             if ( $migrated_object ) {
                 $image = foogallery_migrate_migrator_instance()->get_migrated_objects()[$data['source_url']];
             } else {
-                $image = new Image();
+                $image = new Image( $this );
+                if ( array_key_exists( 'ID', $data ) ) {
+                    $image->ID = absint( $data['ID'] );
+                } else if ( isset( $data['data'] ) && is_object( $data['data'] ) && isset( $data['data']->pid ) ) {
+                    $image->ID = absint( $data['data']->pid );
+                } else if ( isset( $data['data'] ) && is_object( $data['data'] ) && isset( $data['data']->id ) ) {
+                    $image->ID = absint( $data['data']->id );
+                }
                 $image->source_url = $data['source_url'];
                 if ( array_key_exists( 'slug', $data ) ) {
                     $image->slug = $data['slug'];
@@ -212,6 +223,45 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Objects\Plugin' ) ) {
          */
         function get_content_image_identifier( $image_id ) {
             return false;
+        }
+
+        /**
+         * Returns replacement content for source content that does not need a migrated FooGallery object.
+         *
+         * @param string $original_content Original shortcode or serialized block content.
+         * @param string $block_name Block name, if the detected content is a block.
+         * @return string|false Replacement content, or false to use the normal migrated-object replacement.
+         */
+        function get_content_replacement_content( $original_content, $block_name = '' ) {
+            return false;
+        }
+
+        /**
+         * Returns true when the source plugin has image tags that FooGallery can migrate.
+         *
+         * @return bool
+         */
+        function has_migratable_image_tags() {
+            return false;
+        }
+
+        /**
+         * Returns source image tag names that can be assigned to FooGallery media tags.
+         *
+         * @param Image $image Source image object.
+         * @return array Tag names.
+         */
+        function get_image_tags( $image ) {
+            return array();
+        }
+
+        /**
+         * Finds source images with tags for post-migration attachment tag sync.
+         *
+         * @return array Image tag sync items.
+         */
+        function find_image_tag_sync_items() {
+            return array();
         }
     }
 }

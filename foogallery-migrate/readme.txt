@@ -4,7 +4,7 @@ Tags: gallery, image gallery, photo gallery, wordpress gallery plugin, migrate
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 5.4
-Stable tag: 1.9
+Stable tag: 1.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,26 @@ Update now to get all the latest features, bug fixes and improvements!
 [Contact us](https://fooplugins.com/support/) and we will build an importer to help you migrate to FooGallery.
 
 == Changelog ==
+
+= 1.13 =
+* Added direct-access guards to plugin include and view files.
+* Hardened legacy NextGEN and 10Web album queries with sanitized IDs and prepared SQL.
+* Escaped migrated album edit links on the album migration screen.
+* Verified the release package with WordPress Plugin Check security checks.
+
+= 1.12 =
+* Improved migration page performance by loading each tab from its own query arg instead of rendering every tab on first load.
+* Moved image tag migration into a dedicated Image Tags tab.
+* Improved large NextGEN library handling by using lightweight detection queries and deferring image row loading until migration runs.
+* Stopped automatic content scans and migrated log hydration during normal migration page loads.
+* Improved NextGEN image tag reads when NextGEN is installed but inactive.
+
+= 1.11 =
+* Added support for migrating NextGEN tag-based gallery shortcodes to FooGallery media tag shortcodes.
+* Added NextGEN image tag migration so imported attachments can receive matching FooGallery media tags, including when NextGEN is installed but inactive.
+* Added a Sync Image Tags tool to bring NextGEN tags across for images that were already imported.
+* Improved existing migrated image matching so image tags can be synced from saved migration state or detected NextGEN records.
+* Preserved existing FooGallery media tags when syncing migrated NextGEN image tags.
 
 = 1.10 =
 * Added support for replacing NextGEN singlepic shortcodes with standard WordPress captioned image content that links to the full-size attachment.

@@ -3,7 +3,7 @@
         'name' => 'fooplugins/foogallery-migrate',
         'pretty_version' => 'dev-develop',
         'version' => 'dev-develop',
-        'reference' => 'be40fb60156ca5f955ed5d785f47de1d58163fb4',
+        'reference' => '2781b90803d30f2aa02c6d550e20847631a57e29',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'fooplugins/foogallery-migrate' => array(
             'pretty_version' => 'dev-develop',
             'version' => 'dev-develop',
-            'reference' => 'be40fb60156ca5f955ed5d785f47de1d58163fb4',
+            'reference' => '2781b90803d30f2aa02c6d550e20847631a57e29',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

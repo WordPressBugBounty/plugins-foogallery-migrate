@@ -7,6 +7,10 @@
 
 namespace FooPlugins\FooGalleryMigrate\Migrators;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 use FooPlugins\FooGalleryMigrate\Objects\Gallery;
 use FooPlugins\FooGalleryMigrate\Objects\Migratable;
 use FooPlugins\FooGalleryMigrate\Pagination;
@@ -79,7 +83,7 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                     <tbody>
                     <?php
 
-                    $url = add_query_arg( 'page', 'foogallery-migrate' );
+                    $url = foogallery_migrate_admin_url( 'galleries' );
                     $page = 1;
                     if ( defined( 'DOING_AJAX' ) ) {
                         if ( array_key_exists( 'foogallery_migrate_paged', $_POST ) ) {
@@ -94,7 +98,7 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\Migrators\GalleryMigrator' ) 
                     } else if ( array_key_exists( 'gallery_paged', $_GET ) ) {
                         $page = absint( wp_unslash( $_GET['gallery_paged'] ) );
                     }
-                    $url = add_query_arg( 'gallery_paged', $page, $url ) . '#galleries';
+                    $url = add_query_arg( 'gallery_paged', $page, $url );
                     $gallery_count = count( $galleries );
                     $preflight_gallery_count = 0;
                     $preflight_image_count = 0;

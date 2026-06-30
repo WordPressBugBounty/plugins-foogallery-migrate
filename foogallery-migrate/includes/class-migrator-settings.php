@@ -7,6 +7,10 @@
 
 namespace FooPlugins\FooGalleryMigrate;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 use FooPlugins\FooGalleryMigrate\Objects\Plugin;
 
 if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\MigratorSettings' ) ) {
@@ -85,6 +89,31 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\MigratorSettings' ) ) {
 			$settings = get_option( FOOGALLERY_MIGRATE_OPTION_DATA );
 
 			return isset( $settings ) && is_array( $settings );
+		}
+
+		/**
+		 * Returns true if a saved migrator setting has one or more stored items.
+		 *
+		 * This avoids hydrating compact payloads when the caller only needs an
+		 * existence check, such as deciding whether to show a tab.
+		 *
+		 * @param string $name Setting name.
+		 * @return bool
+		 */
+		public function has_migrator_setting_items( $name ) {
+			$settings = get_option( FOOGALLERY_MIGRATE_OPTION_DATA );
+
+			if ( ! isset( $settings ) || ! is_array( $settings ) || ! array_key_exists( $name, $settings ) ) {
+				return false;
+			}
+
+			$value = $settings[ $name ];
+
+			if ( $this->is_compact_payload( $value ) ) {
+				return isset( $value['items'] ) && is_array( $value['items'] ) && count( $value['items'] ) > 0;
+			}
+
+			return is_array( $value ) && count( $value ) > 0;
 		}
 
 		/**
@@ -549,7 +578,8 @@ if ( ! class_exists( 'FooPlugins\FooGalleryMigrate\MigratorSettings' ) ) {
 					$object = new Objects\Album( $plugin );
 					break;
 				case 'image':
-					$object = new Objects\Image();
+					$plugin = ! empty( $record['plugin_name'] ) ? $this->get_available_plugin_by_name( $record['plugin_name'] ) : null;
+					$object = new Objects\Image( false !== $plugin ? $plugin : null );
 					break;
 				default:
 					return $record;
