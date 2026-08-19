@@ -121,4 +121,5 @@ return array(
     'FooPlugins\\FooGalleryMigrate\\Plugins\\Nextgen' => $baseDir . '/includes/plugins/class-nextgen.php',
     'FooPlugins\\FooGalleryMigrate\\Plugins\\Photo' => $baseDir . '/includes/plugins/class-photo.php',
     'FooPlugins\\FooGalleryMigrate\\Plugins\\Robo' => $baseDir . '/includes/plugins/class-robo.php',
+    'FooPlugins\\FooGalleryMigrate\\Plugins\\WordPressCore' => $baseDir . '/includes/plugins/class-word-press-core.php',
 );

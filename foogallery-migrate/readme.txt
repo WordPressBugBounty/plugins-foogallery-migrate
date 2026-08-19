@@ -2,9 +2,9 @@
 Contributors: fooplugins,bradvin,elviiso
 Tags: gallery, image gallery, photo gallery, wordpress gallery plugin, migrate
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 5.4
-Stable tag: 1.13
+Stable tag: 1.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,12 +26,14 @@ Migrate to FooGallery from other gallery plugins, including:
 *	Photo Gallery by 10Web
 *	Robo Gallery
 *	Album and Image Gallery Plus Lightbox (plugin was closed Apr 2026 due to being compromised)
+*	Built-in WordPress Gallery blocks and [gallery] shortcodes
 
 Features:
 
 * Migrate images and galleries
 * Migrate albums
 * Migrate blocks / shortcodes in post & page content
+* Choose whether built-in WordPress galleries create reusable FooGallery records or become dynamic FooGalleries stored directly in content
 
 = Test It First =
 
@@ -78,6 +80,11 @@ Update now to get all the latest features, bug fixes and improvements!
 [Contact us](https://fooplugins.com/support/) and we will build an importer to help you migrate to FooGallery.
 
 == Changelog ==
+
+= 1.14 =
+* Added migration support for built-in WordPress Gallery blocks and [gallery] shortcodes, with a choice between reusable FooGallery records and dynamic replacements stored directly in content.
+* Fixed large content migrations running out of memory or timing out by scanning and migrating content in bounded batches.
+* Added regression coverage for batched content scanning, AJAX migration progress, and hardened database queries.
 
 = 1.13 =
 * Added direct-access guards to plugin include and view files.

@@ -144,6 +144,7 @@ class ComposerStaticInit43ec7e767a7bdd4cb09ba064c76840ae
         'FooPlugins\\FooGalleryMigrate\\Plugins\\Nextgen' => __DIR__ . '/../..' . '/includes/plugins/class-nextgen.php',
         'FooPlugins\\FooGalleryMigrate\\Plugins\\Photo' => __DIR__ . '/../..' . '/includes/plugins/class-photo.php',
         'FooPlugins\\FooGalleryMigrate\\Plugins\\Robo' => __DIR__ . '/../..' . '/includes/plugins/class-robo.php',
+        'FooPlugins\\FooGalleryMigrate\\Plugins\\WordPressCore' => __DIR__ . '/../..' . '/includes/plugins/class-word-press-core.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
