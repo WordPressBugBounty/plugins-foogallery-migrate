@@ -4,7 +4,7 @@ Tags: gallery, image gallery, photo gallery, wordpress gallery plugin, migrate
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 5.4
-Stable tag: 1.14
+Stable tag: 1.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,12 @@ Update now to get all the latest features, bug fixes and improvements!
 [Contact us](https://fooplugins.com/support/) and we will build an importer to help you migrate to FooGallery.
 
 == Changelog ==
+
+= 1.15 =
+* Added stale-status detection for Blocks / Shortcodes when the migrated gallery map changes after a content scan.
+* Added a resumable Refresh Status action that reconciles saved occurrence statuses without rescanning post content.
+* Fixed stale saved statuses preventing gallery occurrences shown as ready from being migrated and replaced.
+* Added backward-compatible revision handling for scans and migrated-object maps created by older versions.
 
 = 1.14 =
 * Added migration support for built-in WordPress Gallery blocks and [gallery] shortcodes, with a choice between reusable FooGallery records and dynamic replacements stored directly in content.
