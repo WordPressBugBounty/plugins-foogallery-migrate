@@ -7,5 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'FooPlugins\\FooGalleryMigrate\\' => array($baseDir . '/includes'),
-    'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
 );
